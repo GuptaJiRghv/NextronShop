@@ -137,6 +137,29 @@ export const StoreProvider = ({ children }) => {
         syncCart(newCart);
     };
 
+    const reorderItems = (orderItems) => {
+        if (!Array.isArray(orderItems) || orderItems.length === 0) return;
+        let updatedCart = [...cart];
+        orderItems.forEach((orderItem) => {
+            const product = products.find(p => p.id === orderItem.id) || orderItem;
+            const availableStock = getAvailableStock(product);
+            const existing = updatedCart.find(item => item.id === orderItem.id);
+            const addQty = orderItem.quantity || 1;
+            if (existing) {
+                const newQty = Math.min(existing.quantity + addQty, availableStock);
+                updatedCart = updatedCart.map(item => item.id === orderItem.id ? { ...item, quantity: newQty } : item);
+            } else {
+                const initialQty = Math.min(addQty, availableStock);
+                if (initialQty > 0) {
+                    updatedCart.push({ ...product, quantity: initialQty });
+                }
+            }
+        });
+        setCart(updatedCart);
+        syncCart(updatedCart);
+        setIsCartOpen(true);
+    };
+
     const addToWishlist = (product) => {
         if (!wishlist.find(item => item.id === product.id)) {
             const newWishlist = [...wishlist, product];
@@ -231,7 +254,7 @@ export const StoreProvider = ({ children }) => {
             cart, wishlist, orders, products,
             isCartOpen, isWishlistOpen, isCheckoutOpen, user,
             theme, toggleTheme,
-            setProducts, addToCart, removeFromCart, updateQuantity,
+            setProducts, addToCart, removeFromCart, updateQuantity, reorderItems,
             addToWishlist, removeFromWishlist, setIsCartOpen, setIsWishlistOpen,
             setIsCheckoutOpen, cartTotal, cartCount, placeOrder,
             login, logout, signup, navigateToCategory
