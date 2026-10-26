@@ -5,6 +5,7 @@ import productRoutes from './product.routes.js';
 import orderRoutes from './order.routes.js';
 import adminRoutes from './admin.routes.js';
 import supportRoutes from './support.routes.js';
+import paymentRoutes from './payment.routes.js';
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use('/products', productRoutes);
 router.use('/orders', orderRoutes);
 router.use('/admin', adminRoutes);
 router.use('/support', supportRoutes);
+router.use('/payments', paymentRoutes);
 
 export default router;

@@ -14,22 +14,28 @@ const text = (value) => (typeof value === 'string' ? value.trim() : '');
  */
 const sanitizeCustomerInfo = (info = {}) => {
     const cleaned = {
-        fullName: text(info.fullName),
+        fullName: text(info.fullName || info.name),
         email: text(info.email),
         phone: text(info.phone),
         address: text(info.address),
         city: text(info.city),
-        state: text(info.state),
-        zipCode: text(info.zipCode),
-        country: text(info.country),
+        state: text(info.state || ''),
+        zipCode: text(info.zipCode || info.postalCode),
+        country: text(info.country || 'United States'),
+        paymentMethod: text(info.paymentMethod || 'QR Mobile Payment'),
+        txId: text(info.txId || ''),
     };
 
-    if (!cleaned.fullName || !cleaned.address || !cleaned.city || !cleaned.country) {
-        throw new ApiError(400, 'VALIDATION_ERROR', 'Name, address, city and country are required to place an order.');
+    if (!cleaned.fullName || !cleaned.address || !cleaned.city) {
+        throw new ApiError(400, 'VALIDATION_ERROR', 'Name, address and city are required to place an order.');
     }
 
     const digits = String(info.cardNumber ?? '').replace(/\D/g, '');
-    cleaned.payment = { method: 'card', last4: digits.slice(-4) || null };
+    cleaned.payment = {
+        method: cleaned.paymentMethod,
+        last4: digits.slice(-4) || null,
+        txId: cleaned.txId || null,
+    };
 
     return cleaned;
 };

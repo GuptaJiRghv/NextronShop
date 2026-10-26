@@ -29,9 +29,16 @@ This build is configured for **Evaluation 1**:
 
 ### 🛍️ Storefront & Shopping Experience
 - **Interactive Catalogue:** Filter by category (Audio, Wearables, Computing, Gaming), live text search, and price sorting.
-- **Product Details:** High-resolution hardware previews, stock availability badges, feature breakdowns, and related product recommendations.
+- **Product Details & Community Reviews:** High-resolution hardware previews, stock availability badges, feature breakdowns, and **Verified Customer Reviews** with live rating submissions.
 - **Cart & Wishlist Drawers:** Slide-over overlays accessible from anywhere in the app with real-time price updates and quantity controls.
-- **Checkout Modal:** Shipping address collection, coupon code validation, order summary calculation, and stock reduction.
+
+### 💳 Dedicated Checkout & Multi-Channel Payment Gateway (`/checkout`)
+- **Step 1 — Shipping Destination:** Address and contact collection with auto-fill for logged-in accounts.
+- **Step 2 — Payment Gateway Options:**
+  - 📱 **QR Code Mobile Scan:** Displays an interactive dynamic QR code. When scanned with any smartphone camera on the local network, opens a dedicated mobile approval screen (`/pay/confirm`) where tapping "Confirm Payment" triggers real-time status polling on the PC to finalize the order. Includes a *Simulate Mobile Approval* button for single-device evaluation.
+  - 💳 **Credit / Debit Card:** Realistic cyber credit card with auto-formatting, cardholder details, CVV, and instant authorization.
+  - 💵 **Cash on Delivery (COD):** Express dispatch with payment upon parcel arrival.
+- **Step 3 — Order Confirmation Receipt:** Instant order creation, line-item receipt, and direct link to the Profile Dashboard.
 
 ### 👤 User Dashboard & Profile
 - **Top Bar Profile Menu:** Clickable avatar pill in the top navigation with user initials, order badge, and quick-action dropdown menu.

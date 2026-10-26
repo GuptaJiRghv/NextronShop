@@ -18,6 +18,8 @@ import MysteryDrop from './pages/MysteryDrop';
 import Profile from './pages/Profile';
 import Trending from './pages/Trending';
 import InfoPage from './pages/InfoPage';
+import Checkout from './pages/Checkout';
+import MobilePayConfirm from './pages/MobilePayConfirm';
 import Footer from './components/Footer';
 
 function App() {
@@ -66,6 +68,8 @@ function App() {
         <Route path="/warranty" element={<InfoPage pageKey="warranty" />} />
         <Route path="/privacy" element={<InfoPage pageKey="privacy" />} />
         <Route path="/terms" element={<InfoPage pageKey="terms" />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/pay/confirm" element={<MobilePayConfirm />} />
       </Routes>
 
       {/* Global Overlays */}

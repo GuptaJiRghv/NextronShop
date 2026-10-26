@@ -1,13 +1,15 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
 
 const CartSidebar = () => {
-    const { cart, isCartOpen, setIsCartOpen, updateQuantity, removeFromCart, cartTotal, setIsCheckoutOpen } = useStore();
+    const { cart, isCartOpen, setIsCartOpen, updateQuantity, removeFromCart, cartTotal } = useStore();
+    const navigate = useNavigate();
     if (!isCartOpen) return null;
 
     const handleCheckout = () => {
         setIsCartOpen(false);
-        setIsCheckoutOpen(true);
+        navigate('/checkout');
     };
 
     return (

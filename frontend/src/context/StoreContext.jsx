@@ -184,10 +184,6 @@ export const StoreProvider = ({ children }) => {
      * @returns {Promise<{ success: boolean, order?: object, error?: string }>}
      */
     const placeOrder = async (customerInfo) => {
-        if (!user) {
-            return { success: false, error: 'Please log in to place your order.' };
-        }
-
         const payload = {
             items: cart.map(({ id, quantity }) => ({ id, quantity })),
             customerInfo,
@@ -195,7 +191,7 @@ export const StoreProvider = ({ children }) => {
         };
 
         try {
-            const { ok, data } = await api.post('/orders', payload);
+            const { ok, data } = await api.post('/orders', payload, { auth: !!user });
 
             if (!ok) {
                 return { success: false, error: data?.message || 'Could not place your order.' };

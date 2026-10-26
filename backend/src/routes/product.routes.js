@@ -4,6 +4,8 @@ import {
     deleteProduct,
     getFeatured,
     getProduct,
+    getProductReviews,
+    addProductReview,
     getTrending,
     listProducts,
     updateProduct,
@@ -18,6 +20,8 @@ router.get('/', listProducts);
 router.get('/trending', getTrending);
 router.get('/featured', getFeatured);
 router.get('/:id', getProduct);
+router.get('/:id/reviews', getProductReviews);
+router.post('/:id/reviews', addProductReview);
 
 // Admin only
 router.post('/', authenticate, authorizeAdmin, validateProduct(false), createProduct);

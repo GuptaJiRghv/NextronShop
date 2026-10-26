@@ -40,6 +40,37 @@ export const authenticate = async (req, res, next) => {
     }
 };
 
+/** Attaches user if valid token present, otherwise attaches a guest customer context */
+export const optionalAuthenticate = async (req, res, next) => {
+    try {
+        const token = readToken(req);
+        if (!token) {
+            req.user = { id: 0, name: 'Guest Customer', email: 'guest@nextron.com', role: 'customer' };
+            return next();
+        }
+
+        let decoded;
+        try {
+            decoded = verifyToken(token);
+        } catch {
+            req.user = { id: 0, name: 'Guest Customer', email: 'guest@nextron.com', role: 'customer' };
+            return next();
+        }
+
+        const user = await UserModel.findById(decoded.user?.id);
+        if (!user) {
+            req.user = { id: 0, name: 'Guest Customer', email: 'guest@nextron.com', role: 'customer' };
+            return next();
+        }
+
+        req.user = UserModel.toPublic(user);
+        next();
+    } catch {
+        req.user = { id: 0, name: 'Guest Customer', email: 'guest@nextron.com', role: 'customer' };
+        next();
+    }
+};
+
 /** Must run after `authenticate`. */
 export const authorizeAdmin = (req, res, next) => {
     if (req.user?.role !== 'admin') {

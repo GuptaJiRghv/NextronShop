@@ -1,6 +1,7 @@
 import ApiError from '../utils/ApiError.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import * as ProductModel from '../models/product.model.js';
+import * as ReviewModel from '../models/review.model.js';
 
 const findOrFail = async (id) => {
     const product = await ProductModel.findById(id);
@@ -67,3 +68,27 @@ export const deleteProduct = asyncHandler(async (req, res) => {
     await ProductModel.remove(req.params.id);
     res.json({ msg: 'Product deleted', id: Number(req.params.id) });
 });
+
+// GET /api/products/:id/reviews
+export const getProductReviews = asyncHandler(async (req, res) => {
+    const reviews = await ReviewModel.findByProductId(req.params.id);
+    const avgRating = reviews.length > 0 
+        ? Math.round((reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length) * 10) / 10 
+        : 5.0;
+    res.json({ reviews, count: reviews.length, avgRating });
+});
+
+// POST /api/products/:id/reviews
+export const addProductReview = asyncHandler(async (req, res) => {
+    const { userName, rating, title, comment } = req.body || {};
+    const review = await ReviewModel.addReview({
+        productId: req.params.id,
+        userName,
+        userRole: 'Verified Customer',
+        rating,
+        title,
+        comment,
+    });
+    res.status(201).json(review);
+});
+
