@@ -44,12 +44,14 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
+
   return (
     <div className="min-h-screen text-[var(--text)] font-sans antialiased">
       <div className="grain-overlay"></div>
       <div className="scroll-progress" id="scrollProgress"></div>
 
-      <Navbar />
+      {!isAuthPage && <Navbar />}
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -77,7 +79,7 @@ function App() {
       <WishlistSidebar />
       <CheckoutModal />
 
-      <Footer />
+      {!isAuthPage && <Footer />}
     </div>
   );
 }

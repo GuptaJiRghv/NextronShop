@@ -157,7 +157,42 @@ body {
 }
 
 .marquee {
-  animation: marquee 30s linear infinite;
+  animation: marquee 35s linear infinite;
+}
+
+@keyframes scroll-up {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes scroll-down {
+  0% {
+    transform: translateY(-50%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-scroll-up {
+  animation: scroll-up 28s linear infinite;
+}
+
+.animate-scroll-down {
+  animation: scroll-down 28s linear infinite;
+}
+
+.pause-hover:hover {
+  animation-play-state: paused;
+}
+
+.vertical-fade-mask {
+  mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
 }
 
 /* Category Card Hover Effects */

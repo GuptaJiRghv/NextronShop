@@ -60,30 +60,14 @@ const Checkout = () => {
   const [completedOrder, setCompletedOrder] = useState(null);
   const [error, setError] = useState(null);
 
+  const isFinalizingRef = useRef(false);
+
   const stopPolling = () => {
     if (pollingRef.current) {
       clearInterval(pollingRef.current);
       pollingRef.current = null;
     }
     setPollingActive(false);
-  };
-
-  const startPolling = (txId) => {
-    stopPolling();
-    setPollingActive(true);
-
-    pollingRef.current = setInterval(async () => {
-      try {
-        const res = await fetch(`/api/payments/status/${txId}`);
-        const data = await res.json();
-        if (res.ok && data.status === 'completed') {
-          stopPolling();
-          triggerPaymentSuccess(txId);
-        }
-      } catch (err) {
-        console.error('Polling error:', err);
-      }
-    }, 1500);
   };
 
   const initQrSession = async (ipOverride) => {
@@ -105,7 +89,6 @@ const Checkout = () => {
         if (!selectedIp || ipOverride) {
           setSelectedIp(data.localIp);
         }
-        startPolling(data.txId);
       } else {
         setError('Failed to initialize mobile payment session.');
       }
@@ -138,6 +121,8 @@ const Checkout = () => {
 
   // Trigger the green tick transition and finalize the order
   const triggerPaymentSuccess = (txId) => {
+    if (isFinalizingRef.current) return;
+    isFinalizingRef.current = true;
     stopPolling();
     setSuccessTxId(txId);
     setSnapshotItems([...cart]);
@@ -168,13 +153,59 @@ const Checkout = () => {
     }
   }, [cart, cartTotal]);
 
+  // Reset finalize lock on step 1
+  useEffect(() => {
+    if (step === 1) {
+      isFinalizingRef.current = false;
+    }
+  }, [step]);
+
   // Initialize QR session when entering Step 2 with QR method selected
   useEffect(() => {
     if (step === 2 && paymentMethod === 'qr' && !qrSession && cart.length > 0) {
       initQrSession();
     }
-    return () => stopPolling();
   }, [step, paymentMethod, qrSession, cart.length]);
+
+  // Robust real-time polling effect for mobile payment completion
+  useEffect(() => {
+    if (step !== 2 || paymentMethod !== 'qr' || !qrSession?.txId || showSuccessTick || completedOrder) {
+      stopPolling();
+      return;
+    }
+
+    setPollingActive(true);
+    let isCancelled = false;
+
+    const pollPaymentStatus = async () => {
+      if (isCancelled || isFinalizingRef.current) return;
+      try {
+        const res = await fetch(`/api/payments/status/${qrSession.txId}?_t=${Date.now()}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!isCancelled && data.status === 'completed' && !isFinalizingRef.current) {
+          triggerPaymentSuccess(qrSession.txId);
+        }
+      } catch (err) {
+        console.error('Payment polling error:', err);
+      }
+    };
+
+    // Immediate first check
+    pollPaymentStatus();
+
+    // Poll every 1000ms (1 second) for real-time responsiveness
+    pollingRef.current = setInterval(pollPaymentStatus, 1000);
+
+    return () => {
+      isCancelled = true;
+      if (pollingRef.current) {
+        clearInterval(pollingRef.current);
+        pollingRef.current = null;
+      }
+      setPollingActive(false);
+    };
+  }, [step, paymentMethod, qrSession?.txId, showSuccessTick, completedOrder]);
 
   // Countdown timer for the big green tick modal
   useEffect(() => {
@@ -926,11 +957,25 @@ const Checkout = () => {
                     </div>
 
                     {/* Real-time Status Indicator */}
-                    <div className="flex items-center justify-center gap-2 text-xs">
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
-                      <span className="text-gray-300">
-                        {pollingActive ? 'Awaiting authorization on your phone (polling active)...' : 'Ready for payment...'}
-                      </span>
+                    <div className="flex items-center justify-center gap-2.5 px-4 py-2 rounded-xl bg-black/60 border border-[var(--border)] max-w-sm mx-auto text-xs">
+                      {pollingActive ? (
+                        <>
+                          <span className="relative flex h-2.5 w-2.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                          </span>
+                          <span className="text-emerald-400 font-semibold text-[11px] uppercase tracking-wide">
+                            Live Sync Active: Waiting for phone confirmation...
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="w-2 h-2 rounded-full bg-gray-500" />
+                          <span className="text-gray-400 text-[11px]">
+                            Ready for mobile scan...
+                          </span>
+                        </>
+                      )}
                     </div>
 
                     {/* Direct Link & Simulation Tools */}
