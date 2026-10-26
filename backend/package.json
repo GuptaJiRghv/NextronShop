@@ -1,0 +1,23 @@
+{
+  "name": "nextron-backend",
+  "version": "1.0.0",
+  "description": "Nextron e-commerce REST API (Express). Evaluation 1 build: in-memory data store, no database.",
+  "main": "src/server.js",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=18.11"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "license": "ISC"
+}
