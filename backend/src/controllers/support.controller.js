@@ -11,6 +11,6 @@ export const submitContact = asyncHandler(async (req, res) => {
 export const subscribeNewsletter = asyncHandler(async (req, res) => {
     const { created } = await SupportModel.addSubscriber(req.body.email);
     res.status(created ? 201 : 200).json({
-        msg: created ? 'You are subscribed to Nextron updates.' : 'You are already subscribed.',
+        msg: created ? 'You are subscribed to Omnyx updates.' : 'You are already subscribed.',
     });
 });

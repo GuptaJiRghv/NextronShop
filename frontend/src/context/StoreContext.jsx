@@ -27,7 +27,7 @@ export const StoreProvider = ({ children }) => {
 
     // Auth State
     const [user, setUser] = useState(() => {
-        const savedUser = localStorage.getItem('nextron_user');
+        const savedUser = localStorage.getItem('omnyx_user') || localStorage.getItem('nextron_user');
         return savedUser ? JSON.parse(savedUser) : null;
     });
 
@@ -59,6 +59,8 @@ export const StoreProvider = ({ children }) => {
                     setOrders(data.orders ?? []);
                 } else if (status === 401) {
                     // Token expired or the server restarted (in-memory accounts are wiped)
+                    localStorage.removeItem('omnyx_token');
+                    localStorage.removeItem('omnyx_user');
                     localStorage.removeItem('nextron_token');
                     localStorage.removeItem('nextron_user');
                     setUser(null);
@@ -68,11 +70,11 @@ export const StoreProvider = ({ children }) => {
     }, [user]);
 
     // Theme State
-    const [theme, setTheme] = useState(() => localStorage.getItem('nextron_theme') || 'dark');
+    const [theme, setTheme] = useState(() => localStorage.getItem('omnyx_theme') || localStorage.getItem('nextron_theme') || 'dark');
 
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('nextron_theme', theme);
+        localStorage.setItem('omnyx_theme', theme);
     }, [theme]);
 
     const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark');
@@ -223,8 +225,8 @@ export const StoreProvider = ({ children }) => {
                 return { success: false, error: data?.error, message: data?.message };
             }
 
-            localStorage.setItem('nextron_token', data.token);
-            localStorage.setItem('nextron_user', JSON.stringify(data.user));
+            localStorage.setItem('omnyx_token', data.token);
+            localStorage.setItem('omnyx_user', JSON.stringify(data.user));
             setUser(data.user);
             return { success: true };
         } catch (error) {
@@ -240,6 +242,8 @@ export const StoreProvider = ({ children }) => {
     const login = (email, password) => authenticate('/auth/login', { email, password });
 
     const logout = () => {
+        localStorage.removeItem('omnyx_token');
+        localStorage.removeItem('omnyx_user');
         localStorage.removeItem('nextron_token');
         localStorage.removeItem('nextron_user');
         setUser(null);

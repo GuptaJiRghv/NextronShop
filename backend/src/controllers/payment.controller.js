@@ -138,7 +138,7 @@ export const getPaymentDetails = asyncHandler(async (req, res) => {
         txId: session.txId,
         amount: session.amount,
         status: session.status,
-        merchant: 'Nextron Cybernetics Store',
+        merchant: 'Omnyx Cybernetics Store',
         currency: 'USD',
         createdAt: session.createdAt,
     });

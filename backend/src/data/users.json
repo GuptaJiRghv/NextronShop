@@ -2,11 +2,21 @@
   {
     "id": "usr_admin",
     "name": "Admin User",
-    "email": "admin@nextron.com",
+    "email": "admin@omnyx.com",
     "password": "$2a$10$LPngJXFBFAIugJpMt4lLg.INS7b3ZhFjB6QfxXzW5x1sPEtkRKB3u",
     "role": "admin",
     "cart": [],
     "wishlist": [],
     "createdAt": "2026-10-27T07:13:10.205Z"
+  },
+  {
+    "id": "791d0925-328a-4e0b-99ca-eefb29e9334e",
+    "name": "Aniket sharma",
+    "email": "aniket@gmail.com",
+    "password": "$2a$10$w9xDZSdhr0PuMfLCnp8upuIYDPTn01ez2zeBLIhR4XomK070iRJv.",
+    "role": "user",
+    "cart": [],
+    "wishlist": [],
+    "createdAt": "2026-10-27T07:30:43.739Z"
   }
 ]

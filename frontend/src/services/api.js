@@ -1,8 +1,8 @@
-// Thin fetch wrapper for the Nextron API (proxied to the backend by Vite at /api).
+// Thin fetch wrapper for the Omnyx API (proxied to the backend by Vite at /api).
 
-const TOKEN_KEY = 'nextron_token';
+const TOKEN_KEY = 'omnyx_token';
 
-export const getToken = () => localStorage.getItem(TOKEN_KEY);
+export const getToken = () => localStorage.getItem(TOKEN_KEY) || localStorage.getItem('nextron_token');
 
 /**
  * @returns {Promise<{ ok: boolean, status: number, data: any }>}

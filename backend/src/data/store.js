@@ -11,7 +11,7 @@ export const USERS_FILE = path.join(__dirname, 'users.json');
 const DEFAULT_ADMIN = {
     id: 'usr_admin',
     name: 'Admin User',
-    email: 'admin@nextron.com',
+    email: 'admin@omnyx.com',
     password: bcrypt.hashSync('admin', 10),
     role: 'admin',
     cart: [],

@@ -45,7 +45,7 @@ export const optionalAuthenticate = async (req, res, next) => {
     try {
         const token = readToken(req);
         if (!token) {
-            req.user = { id: 0, name: 'Guest Customer', email: 'guest@nextron.com', role: 'customer' };
+            req.user = { id: 0, name: 'Guest Customer', email: 'guest@omnyx.com', role: 'customer' };
             return next();
         }
 
@@ -53,20 +53,20 @@ export const optionalAuthenticate = async (req, res, next) => {
         try {
             decoded = verifyToken(token);
         } catch {
-            req.user = { id: 0, name: 'Guest Customer', email: 'guest@nextron.com', role: 'customer' };
+            req.user = { id: 0, name: 'Guest Customer', email: 'guest@omnyx.com', role: 'customer' };
             return next();
         }
 
         const user = await UserModel.findById(decoded.user?.id);
         if (!user) {
-            req.user = { id: 0, name: 'Guest Customer', email: 'guest@nextron.com', role: 'customer' };
+            req.user = { id: 0, name: 'Guest Customer', email: 'guest@omnyx.com', role: 'customer' };
             return next();
         }
 
         req.user = UserModel.toPublic(user);
         next();
     } catch {
-        req.user = { id: 0, name: 'Guest Customer', email: 'guest@nextron.com', role: 'customer' };
+        req.user = { id: 0, name: 'Guest Customer', email: 'guest@omnyx.com', role: 'customer' };
         next();
     }
 };

@@ -1,7 +1,7 @@
 {
-  "name": "nextron-backend",
+  "name": "omnyx-backend",
   "version": "1.0.0",
-  "description": "Nextron e-commerce REST API (Express). Evaluation 1 build: in-memory data store, no database.",
+  "description": "Omnyx e-commerce REST API (Express). Evaluation 1 build: in-memory data store, no database.",
   "main": "src/server.js",
   "type": "module",
   "private": true,

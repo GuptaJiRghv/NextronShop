@@ -1,8 +1,8 @@
 {
-  "name": "nextron-frontend",
+  "name": "omnyx-frontend",
   "version": "1.0.0",
   "private": true,
-  "description": "Nextron storefront (React + Vite + Tailwind)",
+  "description": "Omnyx storefront (React + Vite + Tailwind)",
   "license": "ISC",
   "type": "module",
   "scripts": {

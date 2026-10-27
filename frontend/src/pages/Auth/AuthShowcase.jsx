@@ -66,13 +66,13 @@ const AuthShowcase = () => {
 
       {/* Top Navigation Bar inside showcase */}
       <div className="relative z-10 flex items-center justify-between">
-        {/* Nextron Brand Logo */}
+        {/* Omnyx Brand Logo */}
         <Link to="/" className="flex items-center gap-2.5 group">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-400 via-amber-500 to-yellow-600 flex items-center justify-center text-black font-black text-xl shadow-lg shadow-amber-500/25 group-hover:scale-105 transition-transform">
-            N
+            O
           </div>
           <span className="text-2xl font-black tracking-tight text-white group-hover:text-amber-400 transition-colors">
-            NEXTRON<span className="text-amber-400">.</span>
+            OMNYX<span className="text-amber-400">.</span>
           </span>
         </Link>
 

@@ -48,7 +48,7 @@ const Navbar = () => {
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-12">
                         <Link to="/" className="text-2xl font-black tracking-tighter cursor-pointer glitch">
-                            NEXTRON<span className="text-[var(--accent)]">.</span>
+                            OMNYX<span className="text-[var(--accent)]">.</span>
                         </Link>
                         <div className="hidden md:flex space-x-8 font-mono text-sm">
                             <NavLink to="/" end className={navLinkClass}>HOME</NavLink>

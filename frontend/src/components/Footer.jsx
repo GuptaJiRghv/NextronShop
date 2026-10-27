@@ -43,7 +43,7 @@ const Footer = () => {
             {/* Main footer grid */}
             <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-2 md:grid-cols-4 gap-10">
                 <div>
-                    <h4 className="text-lg font-black tracking-tighter mb-4">NEXTRON<span className="text-[var(--accent)]">.</span></h4>
+                    <h4 className="text-lg font-black tracking-tighter mb-4">OMNYX<span className="text-[var(--accent)]">.</span></h4>
                     <p className="text-sm text-[var(--text-muted)] leading-relaxed">
                         Premium electronics for those who demand more. Built for the future.
                     </p>
@@ -80,7 +80,7 @@ const Footer = () => {
             <div className="border-t border-[var(--border)]">
                 <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
                     <p className="text-xs text-[var(--text-muted)] font-mono">
-                        © {new Date().getFullYear()} NEXTRON. All rights reserved.
+                        © {new Date().getFullYear()} OMNYX. All rights reserved.
                     </p>
                     <div className="flex items-center gap-4">
                         {['GitHub', 'Twitter', 'Discord'].map((s) => (

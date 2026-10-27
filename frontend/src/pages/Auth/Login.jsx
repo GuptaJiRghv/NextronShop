@@ -65,11 +65,11 @@ const Login = () => {
 
   // Quick 1-click Demo Admin Login
   const handleDemoAdminLogin = async () => {
-    setEmail('admin@nextron.com');
+    setEmail('admin@omnyx.com');
     setPassword('admin');
     setError('');
     setLoading(true);
-    const result = await login('admin@nextron.com', 'admin');
+    const result = await login('admin@omnyx.com', 'admin');
     setLoading(false);
     if (result.success) {
       navigate('/');
@@ -85,7 +85,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen w-full bg-[#080808] text-[#E5E5E5] flex flex-col lg:flex-row font-sans selection:bg-amber-400 selection:text-black">
-      {/* ── LEFT COLUMN: NEXTRON SHOWCASE (52% on desktop) ────────────────── */}
+      {/* ── LEFT COLUMN: OMNYX SHOWCASE (52% on desktop) ────────────────── */}
       <div className="w-full lg:w-[52%] xl:w-[55%] h-[420px] sm:h-[480px] lg:h-auto lg:min-h-screen relative flex-shrink-0">
         <AuthShowcase />
       </div>
@@ -236,7 +236,7 @@ const Login = () => {
             className="w-full py-2.5 px-3 rounded-xl border border-dashed border-amber-400/40 bg-amber-400/5 hover:bg-amber-400/10 text-amber-300 text-xs font-mono transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             <KeyRound className="w-3.5 h-3.5" />
-            <span>1-Click Demo Admin Login (admin@nextron.com)</span>
+            <span>1-Click Demo Admin Login (admin@omnyx.com)</span>
           </button>
 
           {/* Switch to Signup */}

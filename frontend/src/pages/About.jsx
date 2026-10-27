@@ -9,13 +9,6 @@ const About = () => {
         { value: '24/7', label: 'Support' },
     ];
 
-    const team = [
-        { name: 'Alex Chen', role: 'Founder & CEO', emoji: '🧑‍💻' },
-        { name: 'Mira Patel', role: 'Head of Design', emoji: '🎨' },
-        { name: 'James Rivera', role: 'Lead Engineer', emoji: '⚙️' },
-        { name: 'Sophie Kim', role: 'Marketing Director', emoji: '📢' },
-    ];
-
     return (
         <div className="min-h-screen pt-24 pb-24">
             <div className="max-w-7xl mx-auto px-6">
@@ -26,7 +19,7 @@ const About = () => {
                         BUILT FOR <span className="text-[var(--accent)]">THE FUTURE</span>
                     </h1>
                     <p className="text-lg text-[var(--text-muted)] leading-relaxed">
-                        NEXTRON was born from a simple idea: premium electronics shouldn't break the bank.
+                        OMNYX was born from a simple idea: premium electronics shouldn't break the bank.
                         We curate the finest audio and tech products, bringing them directly to you without
                         the traditional retail markup.
                     </p>
@@ -71,24 +64,6 @@ const About = () => {
                             ))}
                         </div>
                     </div>
-                </div>
-
-                {/* Team */}
-                <div className="text-center mb-12">
-                    <span className="font-mono text-xs text-[var(--accent)] tracking-widest">THE TEAM</span>
-                    <h2 className="text-3xl font-black tracking-tighter mt-2">
-                        MEET THE <span className="text-[var(--accent)]">CREATORS</span>
-                    </h2>
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
-                    {team.map((member) => (
-                        <div key={member.name} className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 text-center hover:border-[var(--accent)] transition-colors">
-                            <div className="text-4xl mb-3">{member.emoji}</div>
-                            <h3 className="font-bold">{member.name}</h3>
-                            <p className="text-sm text-[var(--text-muted)] font-mono">{member.role}</p>
-                        </div>
-                    ))}
                 </div>
 
                 {/* CTA */}

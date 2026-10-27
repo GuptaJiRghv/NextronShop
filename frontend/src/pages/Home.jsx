@@ -106,7 +106,7 @@ const Home = () => {
                         </h1>
 
                         <p className="text-[var(--text-muted)] text-base sm:text-lg max-w-xl leading-relaxed font-light">
-                            Nextron archives high-performance neural audio, quantum tactical computers, and precision electronics engineered for extreme creator capability.
+                            Omnyx archives high-performance neural audio, quantum tactical computers, and precision electronics engineered for extreme creator capability.
                         </p>
 
                         {/* Pill action buttons (inspired by Atrium reference) */}

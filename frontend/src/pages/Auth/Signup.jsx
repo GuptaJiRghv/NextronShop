@@ -90,12 +90,12 @@ const Signup = () => {
   };
 
   const handleGoogleSignUp = () => {
-    setOauthNotice('Google Authentication is ready. Complete the form below to register your Nextron operative profile.');
+    setOauthNotice('Google Authentication is ready. Complete the form below to register your Omnyx operative profile.');
   };
 
   return (
     <div className="min-h-screen w-full bg-[#080808] text-[#E5E5E5] flex flex-col lg:flex-row font-sans selection:bg-amber-400 selection:text-black">
-      {/* ── LEFT COLUMN: NEXTRON SHOWCASE (52% on desktop) ────────────────── */}
+      {/* ── LEFT COLUMN: OMNYX SHOWCASE (52% on desktop) ────────────────── */}
       <div className="w-full lg:w-[52%] xl:w-[55%] h-[420px] sm:h-[480px] lg:h-auto lg:min-h-screen relative flex-shrink-0">
         <AuthShowcase />
       </div>
@@ -112,7 +112,7 @@ const Signup = () => {
               Create an Account
             </h1>
             <p className="text-xs sm:text-sm text-gray-400">
-              Sign up to unlock the Nextron collective, member drops, and order tracking.
+              Sign up to unlock the Omnyx collective, member drops, and order tracking.
             </p>
           </div>
 
