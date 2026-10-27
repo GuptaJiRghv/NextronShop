@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { store } from '../data/store.js';
+import { store, saveUsers } from '../data/store.js';
 
 const normalizeEmail = (email) => String(email).toLowerCase().trim();
 
@@ -26,6 +26,7 @@ export const create = async ({ name, email, password, role = 'user' }) => {
         createdAt: new Date().toISOString(),
     };
     store.users.push(user);
+    await saveUsers();
     return user;
 };
 
@@ -33,6 +34,7 @@ export const update = async (id, patch) => {
     const user = store.users.find((entry) => entry.id === id);
     if (!user) return null;
     Object.assign(user, patch);
+    await saveUsers();
     return user;
 };
 

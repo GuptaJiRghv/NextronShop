@@ -1,0 +1,12 @@
+[
+  {
+    "id": "usr_admin",
+    "name": "Admin User",
+    "email": "admin@nextron.com",
+    "password": "$2a$10$LPngJXFBFAIugJpMt4lLg.INS7b3ZhFjB6QfxXzW5x1sPEtkRKB3u",
+    "role": "admin",
+    "cart": [],
+    "wishlist": [],
+    "createdAt": "2026-10-27T07:13:10.205Z"
+  }
+]
