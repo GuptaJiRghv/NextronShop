@@ -1,10 +1,54 @@
-import { store } from '../data/store.js';
+import mongoose from 'mongoose';
 
-if (!store.reviews) {
-    store.reviews = [];
-}
+const reviewSchema = new mongoose.Schema(
+    {
+        id: {
+            type: String,
+            required: true,
+            unique: true,
+            index: true,
+        },
+        productId: {
+            type: Number,
+            required: true,
+            index: true,
+        },
+        userName: {
+            type: String,
+            default: 'Anonymous Operative',
+        },
+        userRole: {
+            type: String,
+            default: 'Verified Customer',
+        },
+        rating: {
+            type: Number,
+            required: true,
+            min: 1,
+            max: 5,
+        },
+        title: {
+            type: String,
+            default: 'Exceptional Gear',
+        },
+        comment: {
+            type: String,
+            default: 'No written comments provided.',
+        },
+        date: {
+            type: String,
+        },
+    },
+    {
+        timestamps: true,
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+    }
+);
 
-const SEED_REVIEWS = [
+export const Review = mongoose.models.Review || mongoose.model('Review', reviewSchema);
+
+export const SEED_REVIEWS = [
     {
         id: 'rev_101',
         productId: 1,
@@ -74,19 +118,15 @@ const SEED_REVIEWS = [
         title: '20,000 DPI Pure Precision',
         comment: 'Zero sensor smoothing and the optical switches register in less than 0.2ms. Ergonomics are flawless.',
         date: new Date(Date.now() - 86400000 * 14).toISOString(),
-    }
+    },
 ];
-
-if (store.reviews.length === 0) {
-    store.reviews.push(...SEED_REVIEWS);
-}
 
 export const findByProductId = async (productId) => {
     const targetId = Number(productId);
-    const specific = store.reviews.filter((r) => Number(r.productId) === targetId);
-    
+    const reviews = await Review.find({ productId: targetId }).sort({ createdAt: -1 }).lean();
+
     // If a product doesn't have custom reviews yet, supply general default verified reviews
-    if (specific.length === 0) {
+    if (reviews.length === 0) {
         return [
             {
                 id: `rev_gen_${targetId}_1`,
@@ -107,15 +147,15 @@ export const findByProductId = async (productId) => {
                 title: 'Solid Hardware Addition',
                 comment: 'Sleek dark finish, instant device synchronization, and robust construction. Very pleased with the purchase.',
                 date: new Date(Date.now() - 86400000 * 8).toISOString(),
-            }
+            },
         ];
     }
 
-    return [...specific].sort((a, b) => new Date(b.date) - new Date(a.date));
+    return reviews;
 };
 
 export const addReview = async ({ productId, userName, userRole, rating, title, comment }) => {
-    const newReview = {
+    const newReview = new Review({
         id: 'rev_' + Date.now(),
         productId: Number(productId),
         userName: userName?.trim() || 'Anonymous Operative',
@@ -124,8 +164,8 @@ export const addReview = async ({ productId, userName, userRole, rating, title, 
         title: title?.trim() || 'Exceptional Gear',
         comment: comment?.trim() || 'No written comments provided.',
         date: new Date().toISOString(),
-    };
+    });
 
-    store.reviews.unshift(newReview);
-    return newReview;
+    const saved = await newReview.save();
+    return saved.toObject();
 };

@@ -1,42 +1,101 @@
+import mongoose from 'mongoose';
 import { randomUUID } from 'node:crypto';
-import { store, saveUsers } from '../data/store.js';
 
-const normalizeEmail = (email) => String(email).toLowerCase().trim();
+const userSchema = new mongoose.Schema(
+    {
+        id: {
+            type: String,
+            default: () => randomUUID(),
+            unique: true,
+            index: true,
+        },
+        name: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            lowercase: true,
+            trim: true,
+            index: true,
+        },
+        password: {
+            type: String,
+            required: true,
+        },
+        role: {
+            type: String,
+            enum: ['user', 'admin', 'customer'],
+            default: 'user',
+        },
+        cart: {
+            type: Array,
+            default: [],
+        },
+        wishlist: {
+            type: Array,
+            default: [],
+        },
+    },
+    {
+        timestamps: true,
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+    }
+);
 
-// All functions are async so a real database can replace the store later
-// without changing any controller or service.
+export const User = mongoose.models.User || mongoose.model('User', userSchema);
 
-export const findByEmail = async (email) =>
-    store.users.find((user) => user.email === normalizeEmail(email)) ?? null;
+const normalizeEmail = (email) => String(email || '').toLowerCase().trim();
 
-export const findById = async (id) =>
-    store.users.find((user) => user.id === id) ?? null;
+const buildIdQuery = (id) => {
+    const idStr = String(id);
+    const conditions = [{ id: idStr }];
+    if (mongoose.isValidObjectId(idStr)) {
+        conditions.push({ _id: idStr });
+    }
+    return { $or: conditions };
+};
 
-export const findAll = async () => [...store.users];
+export const findByEmail = async (email) => {
+    return User.findOne({ email: normalizeEmail(email) }).lean();
+};
 
-export const create = async ({ name, email, password, role = 'user' }) => {
-    const user = {
-        id: randomUUID(),
+export const findById = async (id) => {
+    if (!id) return null;
+    return User.findOne(buildIdQuery(id)).lean();
+};
+
+export const findAll = async () => {
+    return User.find().lean();
+};
+
+export const create = async ({ id, name, email, password, role = 'user' }) => {
+    const user = new User({
+        id: id || randomUUID(),
         name: String(name).trim(),
         email: normalizeEmail(email),
         password,
         role,
         cart: [],
         wishlist: [],
-        createdAt: new Date().toISOString(),
-    };
-    store.users.push(user);
-    await saveUsers();
-    return user;
+    });
+
+    const saved = await user.save();
+    return saved.toObject();
 };
 
 export const update = async (id, patch) => {
-    const user = store.users.find((entry) => entry.id === id);
-    if (!user) return null;
-    Object.assign(user, patch);
-    await saveUsers();
-    return user;
+    if (!id) return null;
+    return User.findOneAndUpdate(buildIdQuery(id), { $set: patch }, { new: true }).lean();
 };
 
 /** Safe-to-expose view of a user (never includes the password hash). */
-export const toPublic = ({ id, name, email, role }) => ({ id, name, email, role });
+export const toPublic = (user) => {
+    if (!user) return null;
+    const { id, name, email, role, createdAt } = user;
+    return { id, name, email, role, createdAt };
+};

@@ -8,6 +8,7 @@ const config = {
     jwtSecret: process.env.JWT_SECRET || 'omnyx_dev_secret_change_me',
     jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
     clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
+    mongoUri: process.env.MONGO_URI || '',
 };
 
 if (!process.env.JWT_SECRET && config.env === 'production') {

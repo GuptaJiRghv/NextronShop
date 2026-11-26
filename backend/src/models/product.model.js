@@ -1,45 +1,121 @@
-import { store } from '../data/store.js';
+import mongoose from 'mongoose';
 
-const copy = (product) => ({ ...product });
+const productSchema = new mongoose.Schema(
+    {
+        id: {
+            type: Number,
+            required: true,
+            unique: true,
+            index: true,
+        },
+        name: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        category: {
+            type: String,
+            required: true,
+            index: true,
+        },
+        price: {
+            type: Number,
+            required: true,
+            min: 0,
+        },
+        image: {
+            type: String,
+            default: '',
+        },
+        description: {
+            type: String,
+            default: '',
+        },
+        stock: {
+            type: Number,
+            required: true,
+            min: 0,
+            default: 0,
+        },
+        featured: {
+            type: Boolean,
+            default: false,
+            index: true,
+        },
+        trending: {
+            type: Boolean,
+            default: false,
+            index: true,
+        },
+    },
+    {
+        timestamps: true,
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+    }
+);
 
-export const findAll = async () => store.products.map(copy);
+export const Product = mongoose.models.Product || mongoose.model('Product', productSchema);
 
-export const findById = async (id) => {
-    const product = store.products.find((entry) => entry.id === Number(id));
-    return product ? copy(product) : null;
+const buildProductIdQuery = (id) => {
+    const num = Number(id);
+    const conditions = [];
+    if (!Number.isNaN(num)) {
+        conditions.push({ id: num });
+    }
+    if (mongoose.isValidObjectId(id)) {
+        conditions.push({ _id: id });
+    }
+    return conditions.length > 0 ? { $or: conditions } : { id: -1 };
 };
 
-export const findTrending = async () =>
-    store.products.filter((product) => product.trending).map(copy);
+export const findAll = async () => {
+    return Product.find().sort({ id: 1 }).lean();
+};
 
-export const findFeatured = async () =>
-    store.products.filter((product) => product.featured).map(copy);
+export const findById = async (id) => {
+    return Product.findOne(buildProductIdQuery(id)).lean();
+};
+
+export const findTrending = async () => {
+    return Product.find({ trending: true }).sort({ id: 1 }).lean();
+};
+
+export const findFeatured = async () => {
+    return Product.find({ featured: true }).sort({ id: 1 }).lean();
+};
 
 export const create = async (data) => {
-    const nextId = store.products.reduce((max, product) => Math.max(max, product.id), 0) + 1;
-    const product = { id: nextId, ...data };
-    store.products.push(product);
-    return copy(product);
+    let nextId = Number(data?.id);
+    if (Number.isNaN(nextId) || !nextId) {
+        const lastProduct = await Product.findOne().sort({ id: -1 }).select('id').lean();
+        nextId = (lastProduct?.id || 0) + 1;
+    }
+
+    const product = new Product({
+        ...data,
+        id: nextId,
+    });
+
+    const saved = await product.save();
+    return saved.toObject();
 };
 
 export const update = async (id, patch) => {
-    const product = store.products.find((entry) => entry.id === Number(id));
-    if (!product) return null;
-    Object.assign(product, patch);
-    return copy(product);
+    return Product.findOneAndUpdate(buildProductIdQuery(id), { $set: patch }, { new: true }).lean();
 };
 
 export const remove = async (id) => {
-    const index = store.products.findIndex((entry) => entry.id === Number(id));
-    if (index === -1) return false;
-    store.products.splice(index, 1);
-    return true;
+    const result = await Product.deleteOne(buildProductIdQuery(id));
+    return result.deletedCount > 0;
 };
 
 /** Adds `delta` (negative to decrement) to a product's stock. */
 export const adjustStock = async (id, delta) => {
-    const product = store.products.find((entry) => entry.id === Number(id));
+    const product = await Product.findOne(buildProductIdQuery(id));
     if (!product) return null;
-    product.stock = Math.max(0, product.stock + delta);
-    return copy(product);
+
+    product.stock = Math.max(0, product.stock + Number(delta));
+    await product.save();
+    return product.toObject();
 };

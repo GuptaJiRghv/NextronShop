@@ -1,37 +1,92 @@
-import { store } from '../data/store.js';
+import mongoose from 'mongoose';
 
-const copy = (order) => ({ ...order, items: order.items.map((item) => ({ ...item })) });
+const orderSchema = new mongoose.Schema(
+    {
+        id: {
+            type: Number,
+            required: true,
+            unique: true,
+            index: true,
+        },
+        user: {
+            type: String,
+            required: true,
+            index: true,
+        },
+        items: {
+            type: Array,
+            required: true,
+            default: [],
+        },
+        total: {
+            type: Number,
+            required: true,
+            min: 0,
+        },
+        customerInfo: {
+            type: Object,
+            required: true,
+        },
+        status: {
+            type: String,
+            default: 'Processing',
+        },
+        date: {
+            type: String,
+        },
+    },
+    {
+        timestamps: true,
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+    }
+);
+
+export const Order = mongoose.models.Order || mongoose.model('Order', orderSchema);
+
+const buildOrderIdQuery = (id) => {
+    const num = Number(id);
+    const conditions = [];
+    if (!Number.isNaN(num)) {
+        conditions.push({ id: num });
+    }
+    if (mongoose.isValidObjectId(id)) {
+        conditions.push({ _id: id });
+    }
+    return conditions.length > 0 ? { $or: conditions } : { id: -1 };
+};
 
 export const create = async ({ userId, items, total, customerInfo, date }) => {
-    store.counters.order += 1;
+    const lastOrder = await Order.findOne().sort({ id: -1 }).select('id').lean();
+    const nextId = Math.max(1000, lastOrder?.id || 1000) + 1;
     const now = new Date().toISOString();
-    const order = {
-        id: store.counters.order,
-        user: userId,
-        items,
+
+    const order = new Order({
+        id: nextId,
+        user: String(userId),
+        items: items.map((item) => ({ ...item })),
         total,
         customerInfo,
         status: 'Processing',
         date: date || now,
-        createdAt: now,
-    };
-    store.orders.unshift(order); // newest first
-    return copy(order);
+    });
+
+    const saved = await order.save();
+    return saved.toObject();
 };
 
-export const findAll = async () => store.orders.map(copy);
+export const findAll = async () => {
+    return Order.find().sort({ createdAt: -1 }).lean();
+};
 
-export const findByUser = async (userId) =>
-    store.orders.filter((order) => order.user === userId).map(copy);
+export const findByUser = async (userId) => {
+    return Order.find({ user: String(userId) }).sort({ createdAt: -1 }).lean();
+};
 
 export const findById = async (id) => {
-    const order = store.orders.find((entry) => entry.id === Number(id));
-    return order ? copy(order) : null;
+    return Order.findOne(buildOrderIdQuery(id)).lean();
 };
 
 export const updateStatus = async (id, status) => {
-    const order = store.orders.find((entry) => entry.id === Number(id));
-    if (!order) return null;
-    order.status = status;
-    return copy(order);
+    return Order.findOneAndUpdate(buildOrderIdQuery(id), { $set: { status } }, { new: true }).lean();
 };

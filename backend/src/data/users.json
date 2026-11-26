@@ -5,7 +5,20 @@
     "email": "admin@omnyx.com",
     "password": "$2a$10$LPngJXFBFAIugJpMt4lLg.INS7b3ZhFjB6QfxXzW5x1sPEtkRKB3u",
     "role": "admin",
-    "cart": [],
+    "cart": [
+      {
+        "id": 1,
+        "name": "AeroMesh Pro",
+        "category": "headphones",
+        "price": 299,
+        "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600",
+        "description": "Premium wireless headphones with spatial audio and ANC",
+        "stock": 15,
+        "featured": true,
+        "trending": true,
+        "quantity": 1
+      }
+    ],
     "wishlist": [],
     "createdAt": "2026-10-27T07:13:10.205Z"
   },

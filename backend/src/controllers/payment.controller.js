@@ -1,11 +1,7 @@
 import os from 'os';
 import asyncHandler from '../utils/asyncHandler.js';
 import ApiError from '../utils/ApiError.js';
-import { store } from '../data/store.js';
-
-if (!store.payments) {
-    store.payments = [];
-}
+import * as PaymentModel from '../models/payment.model.js';
 
 export const getNetworkInterfacesList = () => {
     const interfaces = os.networkInterfaces();
@@ -81,16 +77,11 @@ export const createPaymentSession = asyncHandler(async (req, res) => {
     const port = 5173; // Frontend Vite port
     const mobilePayUrl = `http://${localIp}:${port}/pay/confirm?tx=${txId}&amount=${amount || 0}`;
 
-    const session = {
+    const session = await PaymentModel.createSession({
         txId,
         amount: Number(amount) || 0,
         orderData: orderData || null,
-        status: 'pending',
-        createdAt: new Date().toISOString(),
-        completedAt: null,
-    };
-
-    store.payments.push(session);
+    });
 
     res.status(201).json({
         txId,
@@ -111,7 +102,7 @@ export const createPaymentSession = asyncHandler(async (req, res) => {
 // GET /api/payments/status/:txId
 export const getPaymentStatus = asyncHandler(async (req, res) => {
     const { txId } = req.params;
-    const session = store.payments.find((p) => p.txId === txId);
+    const session = await PaymentModel.findByTxId(txId);
 
     if (!session) {
         throw new ApiError(404, 'TRANSACTION_NOT_FOUND', 'Payment transaction session not found.');
@@ -128,7 +119,7 @@ export const getPaymentStatus = asyncHandler(async (req, res) => {
 // GET /api/payments/details/:txId  (used by mobile phone screen)
 export const getPaymentDetails = asyncHandler(async (req, res) => {
     const { txId } = req.params;
-    const session = store.payments.find((p) => p.txId === txId);
+    const session = await PaymentModel.findByTxId(txId);
 
     if (!session) {
         throw new ApiError(404, 'TRANSACTION_NOT_FOUND', 'Payment transaction session not found.');
@@ -147,14 +138,13 @@ export const getPaymentDetails = asyncHandler(async (req, res) => {
 // POST /api/payments/confirm  (hit from phone or simulator when user clicks Confirm)
 export const confirmPayment = asyncHandler(async (req, res) => {
     const { txId } = req.body || {};
-    const session = store.payments.find((p) => p.txId === txId);
+    const session = await PaymentModel.findByTxId(txId);
 
     if (!session) {
         throw new ApiError(404, 'TRANSACTION_NOT_FOUND', 'Transaction not found or expired.');
     }
 
-    session.status = 'completed';
-    session.completedAt = new Date().toISOString();
+    await PaymentModel.markCompleted(txId);
 
     res.json({
         success: true,
